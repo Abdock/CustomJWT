@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtAuth.Abstractions", "JwtAuth.Abstractions\JwtAuth.Abstractions.csproj", "{78ADBB54-1EBB-4919-A0D8-36A8D36A5212}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtAuth.Jwt", "JwtAuth.Jwt\JwtAuth.Jwt.csproj", "{D6411349-210C-46B2-BEDB-EF656100E0E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtAuth.Example.Console", "JwtAuth.Example.Console\JwtAuth.Example.Console.csproj", "{BA133AFA-110F-427D-9D63-7359F5570869}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78ADBB54-1EBB-4919-A0D8-36A8D36A5212}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78ADBB54-1EBB-4919-A0D8-36A8D36A5212}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78ADBB54-1EBB-4919-A0D8-36A8D36A5212}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78ADBB54-1EBB-4919-A0D8-36A8D36A5212}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6411349-210C-46B2-BEDB-EF656100E0E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6411349-210C-46B2-BEDB-EF656100E0E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6411349-210C-46B2-BEDB-EF656100E0E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6411349-210C-46B2-BEDB-EF656100E0E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA133AFA-110F-427D-9D63-7359F5570869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA133AFA-110F-427D-9D63-7359F5570869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA133AFA-110F-427D-9D63-7359F5570869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA133AFA-110F-427D-9D63-7359F5570869}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
