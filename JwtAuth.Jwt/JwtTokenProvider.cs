@@ -1,16 +1,18 @@
-﻿using JwtAuth.Abstractions;
+﻿using System.Text.Json;
+using JwtAuth.Abstractions;
 using JwtAuth.Abstractions.TokenComponents;
-using JwtAuth.Jwt.Extensions;
 
 namespace JwtAuth.Jwt;
 
 public class JwtTokenProvider : ITokenProvider
 {
     private readonly ISecuredHashingAlgorithm _hashingAlgorithm;
+    private readonly ITokenComponentEncoder _componentEncoder;
 
-    public JwtTokenProvider(ISecuredHashingAlgorithm hashingAlgorithm)
+    public JwtTokenProvider(ISecuredHashingAlgorithm hashingAlgorithm, ITokenComponentEncoder componentEncoder)
     {
         _hashingAlgorithm = hashingAlgorithm;
+        _componentEncoder = componentEncoder;
     }
 
     public string GenerateJwt(TokenInfo info)
@@ -27,9 +29,11 @@ public class JwtTokenProvider : ITokenProvider
             Expiration = info.ExpirationDate.UtcDateTime.Ticks,
             CustomClaims = info.CustomClaims.ToList()
         };
-        var signature = _hashingAlgorithm.ComputeHash(info.SecuredKey);
-        var encodedHeader = header.ToBase64String();
-        var encodedPayload = payload.ToBase64String();
+        var serializedHeader = JsonSerializer.Serialize(header);
+        var serializedPayload = JsonSerializer.Serialize(payload);
+        var encodedHeader = _componentEncoder.Encode(serializedHeader);
+        var encodedPayload = _componentEncoder.Encode(serializedPayload);
+        var signature = _hashingAlgorithm.ComputeHash($"{serializedHeader}.{serializedPayload}", info.SecuredKey);
         return $"{encodedHeader}.{encodedPayload}.{signature}";
     }
 }

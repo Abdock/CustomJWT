@@ -1,9 +1,11 @@
 ﻿using JwtAuth.Abstractions;
 using JwtAuth.Jwt;
+using JwtAuth.Jwt.Encoders;
 using JwtAuth.Jwt.SecuredHashingAlgorithms;
 
 ISecuredHashingAlgorithm hashingAlgorithm = new HmacSha256Algorithm();
-ITokenProvider tokenProvider = new JwtTokenProvider(hashingAlgorithm);
+ITokenComponentEncoder tokenComponentEncoder = new Base64UrlTokenComponentEncoder();
+ITokenProvider tokenProvider = new JwtTokenProvider(hashingAlgorithm, tokenComponentEncoder);
 var tokenInfo = new TokenInfo
 {
     Audience = "localAudience",

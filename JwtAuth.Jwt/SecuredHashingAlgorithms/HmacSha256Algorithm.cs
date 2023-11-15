@@ -29,8 +29,16 @@ public class HmacSha256Algorithm : ISecuredHashingAlgorithm
 
     public string ComputeHash(string data)
     {
-        var encryptedKey = _encoding.GetBytes(data);
-        var hashedData = _algorithm.ComputeHash(encryptedKey);
+        var encodedKey = _encoding.GetBytes(data);
+        var hashedData = _algorithm.ComputeHash(encodedKey);
+        return Convert.ToBase64String(hashedData);
+    }
+
+    public string ComputeHash(string key, string data)
+    {
+        var encodedKey = _encoding.GetBytes(key);
+        var encodedData = _encoding.GetBytes(data);
+        var hashedData = HMACSHA256.HashData(encodedKey, encodedData);
         return Convert.ToBase64String(hashedData);
     }
 }
