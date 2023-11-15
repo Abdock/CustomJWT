@@ -1,11 +1,14 @@
 ﻿using System.Text.Json;
 using JwtAuth.Abstractions;
+using JwtAuth.Abstractions.Exceptions;
 using JwtAuth.Abstractions.TokenComponents;
 
 namespace JwtAuth.Jwt;
 
 public class JwtTokenProvider : ITokenProvider
 {
+    private const string ValidTokenType = "JWT";
+
     private readonly ISecuredHashingAlgorithm _hashingAlgorithm;
     private readonly ITokenComponentEncoder _componentEncoder;
 
@@ -20,13 +23,13 @@ public class JwtTokenProvider : ITokenProvider
         var header = new Header
         {
             Algorithm = _hashingAlgorithm.AlgorithmName,
-            TokenType = "JWT"
+            TokenType = ValidTokenType
         };
         var payload = new Payload
         {
             Audience = info.Audience,
             Issuer = info.Issuer,
-            Expiration = info.ExpirationDate.UtcDateTime.Ticks,
+            Expiration = info.ExpirationDate.ToUnixTimeSeconds(),
             CustomClaims = info.CustomClaims.ToList()
         };
         var serializedHeader = JsonSerializer.Serialize(header);
@@ -35,5 +38,33 @@ public class JwtTokenProvider : ITokenProvider
         var encodedPayload = _componentEncoder.Encode(serializedPayload);
         var signature = _hashingAlgorithm.ComputeHash($"{serializedHeader}.{serializedPayload}", info.SecuredKey);
         return $"{encodedHeader}.{encodedPayload}.{signature}";
+    }
+
+    public bool IsValidToken(string jwt, string securedKey)
+    {
+        const char tokenComponentSeparator = '.';
+        var components = jwt.Split(tokenComponentSeparator);
+        if (components.Length != 3)
+        {
+            throw new InvalidTokenException("Token should consists of 3 components: Header, Payload, Signature");
+        }
+
+        var serializedHeader = _componentEncoder.Decode(components[0]);
+        var serializedPayload = _componentEncoder.Decode(components[1]);
+        var header = JsonSerializer.Deserialize<Header>(serializedHeader) ?? throw new InvalidTokenException("Invalid token header");
+        var payload = JsonSerializer.Deserialize<Payload>(serializedPayload) ?? throw new InvalidTokenException("Invalid token payload");
+        if (!header.TokenType.Equals(ValidTokenType, StringComparison.OrdinalIgnoreCase) || !header.Algorithm.Equals(_hashingAlgorithm.AlgorithmName, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        var offset = DateTimeOffset.FromUnixTimeSeconds(payload.Expiration);
+        if (offset.UtcDateTime < DateTimeOffset.UtcNow.UtcDateTime)
+        {
+            return false;
+        }
+
+        var decodedSignature = _hashingAlgorithm.ComputeHash($"{serializedHeader}.{serializedPayload}", securedKey);
+        return decodedSignature.Equals(components[2]);
     }
 }

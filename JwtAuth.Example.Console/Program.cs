@@ -15,3 +15,4 @@ var tokenInfo = new TokenInfo
 };
 var jwt = tokenProvider.GenerateJwt(tokenInfo);
 Console.WriteLine(jwt);
+Console.WriteLine(tokenProvider.IsValidToken(jwt, tokenInfo.SecuredKey));

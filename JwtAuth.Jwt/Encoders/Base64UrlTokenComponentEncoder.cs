@@ -37,7 +37,7 @@ public class Base64UrlTokenComponentEncoder : ITokenComponentEncoder
 
     public string Decode(string base64UrlStringEncoded)
     {
-        var initialStringBuilder = new StringBuilder();
+        var initialStringBuilder = new StringBuilder(base64UrlStringEncoded);
         initialStringBuilder = initialStringBuilder
             .Replace(Base64UrlCharacter62, Base64Character62)
             .Replace(Base64UrlCharacter63, Base64Character63);
