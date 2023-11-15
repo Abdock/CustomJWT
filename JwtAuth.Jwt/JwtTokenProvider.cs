@@ -36,7 +36,7 @@ public class JwtTokenProvider : ITokenProvider
         var serializedPayload = JsonSerializer.Serialize(payload);
         var encodedHeader = _componentEncoder.Encode(serializedHeader);
         var encodedPayload = _componentEncoder.Encode(serializedPayload);
-        var signature = _hashingAlgorithm.ComputeHash($"{serializedHeader}.{serializedPayload}", info.SecuredKey);
+        var signature = _hashingAlgorithm.ComputeHash(info.SecuredKey, $"{encodedHeader}.{encodedPayload}");
         return $"{encodedHeader}.{encodedPayload}.{signature}";
     }
 
@@ -59,12 +59,12 @@ public class JwtTokenProvider : ITokenProvider
         }
 
         var offset = DateTimeOffset.FromUnixTimeSeconds(payload.Expiration);
-        if (offset.UtcDateTime < DateTimeOffset.UtcNow.UtcDateTime)
+        if (offset.UtcDateTime < DateTimeOffset.Now.UtcDateTime)
         {
             return false;
         }
 
-        var decodedSignature = _hashingAlgorithm.ComputeHash($"{serializedHeader}.{serializedPayload}", securedKey);
+        var decodedSignature = _hashingAlgorithm.ComputeHash(securedKey, $"{components[0]}.{components[1]}");
         return decodedSignature.Equals(components[2]);
     }
 }
