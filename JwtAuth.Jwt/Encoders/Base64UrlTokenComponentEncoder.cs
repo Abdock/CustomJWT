@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using JwtAuth.Abstractions;
+using JwtAuth.Jwt.Helpers;
 
 namespace JwtAuth.Jwt.Encoders;
 
@@ -28,11 +29,7 @@ public class Base64UrlTokenComponentEncoder : ITokenComponentEncoder
     {
         var encodedData = _encoding.GetBytes(data);
         var base64String = Convert.ToBase64String(encodedData);
-        var base64UrlStringBuilder = new StringBuilder(base64String.Split(Base64PadCharacter).First());
-        return base64UrlStringBuilder
-            .Replace(Base64Character62, Base64UrlCharacter62)
-            .Replace(Base64Character63, Base64UrlCharacter63)
-            .ToString();
+        return base64String.ConvertBase64StringToBase64UrlString();
     }
 
     public string Decode(string base64UrlStringEncoded)

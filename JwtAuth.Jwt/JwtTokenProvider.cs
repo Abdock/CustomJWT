@@ -2,6 +2,7 @@
 using JwtAuth.Abstractions;
 using JwtAuth.Abstractions.Exceptions;
 using JwtAuth.Abstractions.TokenComponents;
+using JwtAuth.Jwt.Helpers;
 
 namespace JwtAuth.Jwt;
 
@@ -37,7 +38,7 @@ public class JwtTokenProvider : ITokenProvider
         var encodedHeader = _componentEncoder.Encode(serializedHeader);
         var encodedPayload = _componentEncoder.Encode(serializedPayload);
         var signature = _hashingAlgorithm.ComputeHash(info.SecuredKey, $"{encodedHeader}.{encodedPayload}");
-        return $"{encodedHeader}.{encodedPayload}.{signature}";
+        return $"{encodedHeader}.{encodedPayload}.{signature.ConvertBase64StringToBase64UrlString()}";
     }
 
     public bool IsValidToken(string jwt, string securedKey)
@@ -64,7 +65,7 @@ public class JwtTokenProvider : ITokenProvider
             return false;
         }
 
-        var decodedSignature = _hashingAlgorithm.ComputeHash(securedKey, $"{components[0]}.{components[1]}");
+        var decodedSignature = _hashingAlgorithm.ComputeHash(securedKey, $"{components[0]}.{components[1]}").ConvertBase64StringToBase64UrlString();
         return decodedSignature.Equals(components[2]);
     }
 }
